@@ -1,5 +1,5 @@
 do zrobienia:
-użycie formatki wcześniejszej
-niewpisywanie pustej wartości
-poprawa pola do skreślenia
-możliwość pobrania danych z bazy danych
+1. użycie formatki wcześniejszej
+2. niewpisywanie pustej wartości
+3. poprawa pola do skreślenia
+4. możliwość pobrania danych z bazy danych
