@@ -1,5 +1,5 @@
 do zrobienia:
-1. użycie formatki wcześniejszej
-2. niewpisywanie pustej wartości
-3. poprawa pola do skreślenia
+
+
+3. poprawa pól do wybierania z listy (dynamiczne listy)
 4. możliwość pobrania danych z bazy danych
