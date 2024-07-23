@@ -38,7 +38,7 @@ def generate_docx(modeladmin, request, queryset):
         table2.cell(6, 3).text = form_data.istotnosc_integr or ""
         table2.cell(7, 3).text = form_data.istotnosc_dost or ""
         table2.cell(9, 0).paragraphs[0].text = form_data.zglaszajacy_podpis or ""
-        table2.cell(10, 0).paragraphs[0].add_run(form_data.kierownik_lim_opinia or "")
+        table2.cell(10, 0).paragraphs[1].add_run(form_data.kierownik_lim_opinia or "")
         table2.cell(11, 0).paragraphs[0].text = form_data.kierownik_lim_podpis or ""
         if str(form_data.kierownik_lim_data) == "None":
             table2.cell(11, 0).paragraphs[2].text = ""
@@ -51,7 +51,7 @@ def generate_docx(modeladmin, request, queryset):
             table2.cell(13, 0).paragraphs[-1].text = ""
         else:
             table2.cell(13, 0).paragraphs[-1].text = str(form_data.kierownik_km_data)
-        table2.cell(14, 0).paragraphs[0].add_run(form_data.realizacja_opis or "")
+        table2.cell(14, 0).paragraphs[1].add_run(form_data.realizacja_opis or "")
         table2.cell(15, 0).paragraphs[-1].text = form_data.realizacja_podpis or ""
         if str(form_data.realizacja_data) == "None":
             table2.cell(15, 0).paragraphs[-1].text = ""
