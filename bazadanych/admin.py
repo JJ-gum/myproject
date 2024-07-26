@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponse
 from django.db import connection
-from .models import FormData, Device, OperatingSystem
+from .models import Zgloszenie, Urzadzenie, SystemOperacyjny
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -19,7 +19,7 @@ def generate_docx(modeladmin, request, queryset):
         df = pd.DataFrame(rows, columns=columns)
 
     for index, row in df.iterrows():
-        document = Document("C:/Projects/myproject/myapp/Zgloszenie_szablon.docx")
+        document = Document("C:/Projects/projektbazadanych/bazadanych/Zgloszenie_szablon.docx")
         table1 = document.tables[0]
         table2 = document.tables[1]
         # Tabela 1
@@ -85,22 +85,23 @@ def generate_docx(modeladmin, request, queryset):
         return response
 
 
-generate_docx.short_description = "Generate DOCX for selected entries"
+generate_docx.short_description = "Wygeneruj formularz w formacie .docx"
 
 
-@admin.register(FormData)
-class FormDataAdmin(admin.ModelAdmin):
+@admin.register(Zgloszenie)
+class ZgloszenieFormularz(admin.ModelAdmin):
     list_display = ('id', 'nr_EZD_ID_koszulki', 'nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium',)
     search_fields = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'nr_EZD_ID_koszulki',)
     list_filter = ('data_zgloszenia', 'nazwa_zakladu', 'laboratorium')
     ordering = ('-id',)
     actions = [generate_docx]
 
-@admin.register(Device)
-class Device(admin.ModelAdmin):
+
+@admin.register(Urzadzenie)
+class Urzadzenie(admin.ModelAdmin):
     list_display = ('pim_id', 'data_rejestracji', 'laboratorium', 'numer_ewidencyjny')
     search_fields =('pim_id', 'data_rejestracji', 'numer_ewidencyjny')
     ordering = ('-pim_id',)
 
 
-admin.site.register(OperatingSystem)
+admin.site.register(SystemOperacyjny)

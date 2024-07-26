@@ -88,21 +88,21 @@ ISTOTNOSC_CHOICES = [
 ]
 
 
-class OperatingSystem(models.Model):
+class SystemOperacyjny(models.Model):
     os_type = models.CharField(db_column="Operating System", primary_key=True, max_length=120)
 
     def __str__(self):
         return self.os_type
 
 
-class Device(models.Model):
+class Urzadzenie(models.Model):
     pim_id = models.AutoField(db_column="PIM ID", primary_key=True)
     laboratorium = models.CharField(db_column="Lab Name", max_length=200, blank=True, null=True)
     nr_pomieszczenia = models.CharField(db_column="Room number", max_length=40, blank=True, null=True)
     opis = models.TextField(db_column="Terminal Description", blank=True, null=True)
     numer_ewidencyjny = models.CharField(db_column="Inventory Number", max_length=40, blank=True, null=True)
     typ_urzadzenia = models.CharField(db_column="Device Type", max_length=40, choices=DEVICE_CHOICES, blank=True, null=True)
-    system_operacyjny = models.ManyToManyField(OperatingSystem, db_column="Operating System", blank=True)
+    system_operacyjny = models.ManyToManyField(SystemOperacyjny, db_column="Operating System", blank=True)
     cpu = models.CharField(db_column="CPU", max_length=40, blank=True, null=True)
     ram = models.CharField(db_column="RAM", max_length=40, blank=True, null=True)
     pamiec_dysku = models.CharField(db_column="Drive Memory", max_length=40, blank=True, null=True)
@@ -120,7 +120,7 @@ class Device(models.Model):
         return f"{self.laboratorium} - {self.nr_pomieszczenia} - {self.typ_urzadzenia}"
 
 
-class FormData(models.Model):
+class Zgloszenie(models.Model):
     id = models.AutoField(primary_key=True)
     nr_EZD_ID_koszulki = models.CharField(max_length=100, blank=True, null=True)
     nr_zgloszenia = models.CharField(max_length=100, blank=True, null=True)
@@ -155,3 +155,4 @@ class FormData(models.Model):
 
     def __str__(self):
         return self.nr_zgloszenia if self.nr_zgloszenia else 'No ID'
+

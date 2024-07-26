@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('myapp', '0001_initial'),
+        ('bazadanych', '0001_initial'),
     ]
 
     operations = [
@@ -23,6 +23,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='device',
             name='system_operacyjny',
-            field=models.ManyToManyField(blank=True, db_column='Operating System', to='myapp.operatingsystem'),
+            field=models.ManyToManyField(blank=True, db_column='Operating System', to='bazadanych.operatingsystem'),
         ),
     ]

@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                 ('opiekun_1', models.CharField(db_column='Supervisor 1', max_length=40, null=True)),
                 ('opiekun_2', models.CharField(blank=True, db_column='Supervisor 2', max_length=40, null=True)),
                 ('typ_polaczenia_sieciowego', models.CharField(blank=True, choices=[('Office', 'Office'), ('OT', 'OT'), ('Isolated', 'Isolated'), ('None', 'None')], db_column='Terminal Connection Type', max_length=40, null=True)),
-                ('system_operacyjny', models.ManyToManyField(blank=True, db_column='Operating System', null=True, to='myapp.operatingsystem')),
+                ('system_operacyjny', models.ManyToManyField(blank=True, db_column='Operating System', null=True, to='bazadanych.operatingsystem')),
             ],
         ),
     ]
