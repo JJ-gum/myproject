@@ -1,73 +1,86 @@
 from django.contrib import admin
 from django.http import HttpResponse
-from .models import FormData
+from django.db import connection
+from .models import FormData, Device, OperatingSystem
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
+import pandas as pd
 
 
 def generate_docx(modeladmin, request, queryset):
-    for form_data in queryset:
-        document = Document("C:\Projects\myproject\myapp\Zgloszenie_szablon.docx")
+    # Convert queryset to DataFrame
+    ids = [obj.id for obj in queryset]
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT * FROM myapp_formdata WHERE id IN ({','.join(map(str, ids))})")
+        rows = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+        df = pd.DataFrame(rows, columns=columns)
+
+    for index, row in df.iterrows():
+        document = Document("C:/Projects/myproject/myapp/Zgloszenie_szablon.docx")
         table1 = document.tables[0]
         table2 = document.tables[1]
         # Tabela 1
-        table1.cell(0, 3).paragraphs[0].text = form_data.nr_zgloszenia or ""
+        table1.cell(0, 3).paragraphs[0].text = row['nr_zgloszenia'] or ""
         table1.cell(0, 3).add_paragraph().alignment = WD_ALIGN_PARAGRAPH.CENTER
-        table1.cell(0, 3).paragraphs[1].text = form_data.nr_EZD or ""
-        if str(form_data.data_zgloszenia) == "None":
+        table1.cell(0, 3).paragraphs[1].text = row['nr_EZD'] or ""
+        if str(row['data_zgloszenia']) == "None":
             table1.cell(1, 3).paragraphs[-1].text = ""
         else:
-            table1.cell(1, 3).paragraphs[-1].text = str(form_data.data_zgloszenia)
+            table1.cell(1, 3).paragraphs[-1].text = str(row['data_zgloszenia'])
         # Paragrafy
-        document.paragraphs[2].add_run(form_data.nazwa_zakladu or "")
-        document.paragraphs[3].add_run(form_data.laboratorium or "")
-        document.paragraphs[4].add_run(form_data.zglaszajacy or "")
-        document.paragraphs[5].add_run(form_data.telefon or "")
-        document.paragraphs[6].add_run(form_data.nr_pomieszczenia or "")
+        document.paragraphs[2].add_run(row['nazwa_zakladu'] or "")
+        document.paragraphs[3].add_run(row['laboratorium'] or "")
+        document.paragraphs[4].add_run(row['zglaszajacy'] or "")
+        document.paragraphs[5].add_run(row['telefon'] or "")
+        document.paragraphs[6].add_run(row['nr_pomieszczenia'] or "")
 
         # Tabela 2
-        table2.cell(0, 0).paragraphs[-1].add_run(form_data.nazwa_urzadzenia) or ""
-        table2.cell(1, 0).paragraphs[-1].add_run(form_data.dostep_do_sieci or "")
-        table2.cell(2, 0).paragraphs[-1].add_run(form_data.nr_ewidencyjny or "")
-        table2.cell(2, 2).paragraphs[-1].add_run(form_data.nr_gniazdka_lan or "")
-        table2.cell(3, 0).paragraphs[-1].add_run(form_data.opis_zgloszenia or "")
-        table2.cell(4, 0).paragraphs[-1].add_run(form_data.oczekiwania or "")
-        table2.cell(5, 3).text = form_data.istotnosc_pouf or ""
-        table2.cell(6, 3).text = form_data.istotnosc_integr or ""
-        table2.cell(7, 3).text = form_data.istotnosc_dost or ""
-        table2.cell(9, 0).paragraphs[0].text = form_data.zglaszajacy_podpis or ""
-        table2.cell(10, 0).paragraphs[1].add_run(form_data.kierownik_lim_opinia or "")
-        table2.cell(11, 0).paragraphs[0].text = form_data.kierownik_lim_podpis or ""
-        if str(form_data.kierownik_lim_data) == "None":
+        table2.cell(0, 0).paragraphs[-1].add_run(row['nazwa_urzadzenia'] or "")
+        table2.cell(1, 0).paragraphs[-1].add_run(row['dostep_do_sieci'] or "")
+        table2.cell(2, 0).paragraphs[-1].add_run(row['nr_ewidencyjny'] or "")
+        table2.cell(2, 2).paragraphs[-1].add_run(row['nr_gniazdka_lan'] or "")
+        table2.cell(3, 0).paragraphs[-1].add_run(row['opis_zgloszenia'] or "")
+        table2.cell(4, 0).paragraphs[-1].add_run(row['oczekiwania'] or "")
+        table2.cell(5, 3).text = row['istotnosc_pouf'] or ""
+        table2.cell(6, 3).text = row['istotnosc_integr'] or ""
+        table2.cell(7, 3).text = row['istotnosc_dost'] or ""
+        table2.cell(9, 0).paragraphs[0].text = row['zglaszajacy_podpis'] or ""
+        table2.cell(10, 0).paragraphs[1].add_run(row['kierownik_lim_opinia'] or "")
+        table2.cell(11, 0).paragraphs[0].text = row['kierownik_lim_podpis'] or ""
+        if str(row['kierownik_lim_data']) == "None":
             table2.cell(11, 0).paragraphs[2].text = ""
         else:
-            table2.cell(11, 0).paragraphs[2].text = str(form_data.kierownik_lim_data)
+            table2.cell(11, 0).paragraphs[2].text = str(row['kierownik_lim_data'])
 
-        table2.cell(12, 0).paragraphs[1].add_run(form_data.kierownik_km_opinia)
-        table2.cell(13, 0).paragraphs[0].add_run(form_data.kierownik_km_podpis or "")
-        if str(form_data.kierownik_km_data) == "None":
+        table2.cell(12, 0).paragraphs[1].add_run(row['kierownik_km_opinia'] or "")
+        table2.cell(13, 0).paragraphs[0].add_run(row['kierownik_km_podpis'] or "")
+        if str(row['kierownik_km_data']) == "None":
             table2.cell(13, 0).paragraphs[-1].text = ""
         else:
-            table2.cell(13, 0).paragraphs[-1].text = str(form_data.kierownik_km_data)
-        table2.cell(14, 0).paragraphs[1].add_run(form_data.realizacja_opis or "")
-        table2.cell(15, 0).paragraphs[-1].text = form_data.realizacja_podpis or ""
-        if str(form_data.realizacja_data) == "None":
+            table2.cell(13, 0).paragraphs[-1].text = str(row['kierownik_km_data'])
+        table2.cell(14, 0).paragraphs[1].add_run(row['realizacja_opis'] or "")
+        table2.cell(15, 0).paragraphs[-1].text = row['realizacja_podpis'] or ""
+        if str(row['realizacja_data']) == "None":
             table2.cell(15, 0).paragraphs[-1].text = ""
         else:
-            table2.cell(15, 0).paragraphs[-1].text = str(form_data.realizacja_data)
+            table2.cell(15, 0).paragraphs[-1].text = str(row['realizacja_data'])
 
-        table2.cell(16, 0).paragraphs[2].add_run(form_data.potwierdzenie_podpis or "")
-        if str(form_data.potwierdzenie_data) == "None":
+        table2.cell(16, 0).paragraphs[2].add_run(row['potwierdzenie_podpis'] or "")
+        if str(row['potwierdzenie_data']) == "None":
             table2.cell(16, 0).paragraphs[-1].text = ""
         else:
-            table2.cell(16, 0).paragraphs[-1].text = str(form_data.potwierdzenie_data)
+            table2.cell(16, 0).paragraphs[-1].text = str(row['potwierdzenie_data'])
 
         # Clean the filename to avoid illegal characters
-        cleaned_name = re.sub(r'[\\/*?:"<>|]', "", form_data.nr_zgloszenia)
+        prefix = (row['nr_zgloszenia'] or "Unknown").replace(".", "n").replace("/", "n")
+        filename = f"{prefix}-F1-IP003-A-IT Zgloszenie-pomocy-technicznej-systemow-informatyki-metrologicznej-(SIM).docx"
+        cleaned_name = re.sub(r'[\\/*?:"<>|]', "", filename)
+
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-        response['Content-Disposition'] = f'attachment; filename={cleaned_name}.docx'
+        response['Content-Disposition'] = f'attachment; filename={cleaned_name}'
         document.save(response)
         return response
 
@@ -77,8 +90,17 @@ generate_docx.short_description = "Generate DOCX for selected entries"
 
 @admin.register(FormData)
 class FormDataAdmin(admin.ModelAdmin):
-    list_display = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium')
-    search_fields = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium')
+    list_display = ('id', 'nr_EZD_ID_koszulki', 'nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium',)
+    search_fields = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'nr_EZD_ID_koszulki',)
     list_filter = ('data_zgloszenia', 'nazwa_zakladu', 'laboratorium')
-    ordering = ()
+    ordering = ('-id',)
     actions = [generate_docx]
+
+@admin.register(Device)
+class Device(admin.ModelAdmin):
+    list_display = ('pim_id', 'data_rejestracji', 'laboratorium', 'numer_ewidencyjny')
+    search_fields =('pim_id', 'data_rejestracji', 'numer_ewidencyjny')
+    ordering = ('-pim_id',)
+
+
+admin.site.register(OperatingSystem)
