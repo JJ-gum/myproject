@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.db import connection
 from .models import Zgloszenie, Urzadzenie, SystemOperacyjny
-
+from io import BytesIO
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
@@ -78,10 +78,12 @@ def generate_docx(modeladmin, request, queryset):
         prefix = (row['nr_zgloszenia'] or "Wybierz-kolego-numer-zgloszenia-nastepnym-razem-czy-cos").replace(".", "n").replace("/", "n")
         filename = f"{prefix}-F1-IP003-A-IT Zgloszenie-pomocy-technicznej-systemow-informatyki-metrologicznej-(SIM).docx"
         cleaned_name = re.sub(r'[\\/*?:"<>|]', "", filename)
-
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        buffer = BytesIO()
+        document.save(buffer)
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = f'attachment; filename={cleaned_name}'
-        document.save(response)
+
         return response
 
 
@@ -100,7 +102,7 @@ class ZgloszenieFormularz(admin.ModelAdmin):
 @admin.register(Urzadzenie)
 class Urzadzenie(admin.ModelAdmin):
     list_display = ('pim_id', 'data_rejestracji', 'laboratorium', 'numer_ewidencyjny')
-    search_fields =('pim_id', 'data_rejestracji', 'numer_ewidencyjny')
+    search_fields = ('pim_id', 'data_rejestracji', 'numer_ewidencyjny')
     ordering = ('-pim_id',)
 
 
