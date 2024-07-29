@@ -152,6 +152,7 @@ class Zgloszenie(models.Model):
     realizacja_data = models.DateField(blank=True, null=True)
     potwierdzenie_podpis = models.CharField(max_length=100, blank=True, null=True)
     potwierdzenie_data = models.DateField(blank=True, null=True)
+    urzadzenie_id = models.ForeignKey(Urzadzenie, db_column="PIM ID", on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.nr_zgloszenia if self.nr_zgloszenia else 'No ID'

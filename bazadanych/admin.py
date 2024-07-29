@@ -90,9 +90,9 @@ generate_docx.short_description = "Wygeneruj formularz w formacie .docx"
 
 @admin.register(Zgloszenie)
 class ZgloszenieFormularz(admin.ModelAdmin):
-    list_display = ('id', 'nr_EZD_ID_koszulki', 'nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium',)
-    search_fields = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'nr_EZD_ID_koszulki',)
-    list_filter = ('data_zgloszenia', 'nazwa_zakladu', 'laboratorium')
+    list_display = ('id', 'nr_EZD_ID_koszulki', 'nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'urzadzenie_id',)
+    search_fields = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'nr_EZD_ID_koszulki', 'urzadzenie_id')
+    list_filter = ('data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'urzadzenie_id')
     ordering = ('-id',)
     actions = [generate_docx]
 
