@@ -19,7 +19,7 @@ def generate_docx(modeladmin, request, queryset):
         df = pd.DataFrame(rows, columns=columns)
 
     for index, row in df.iterrows():
-        document = Document("C:/Projects/projektbazadanych/bazadanych/Zgloszenie_szablon.docx")
+        document = Document("bazadanych/Zgloszenie_szablon.docx")
         table1 = document.tables[0]
         table2 = document.tables[1]
         # Tabela 1
@@ -75,7 +75,7 @@ def generate_docx(modeladmin, request, queryset):
             table2.cell(16, 0).paragraphs[-1].text = str(row['potwierdzenie_data'])
 
         # Clean the filename to avoid illegal characters
-        prefix = (row['nr_zgloszenia'] or "Unknown").replace(".", "n").replace("/", "n")
+        prefix = (row['nr_zgloszenia'] or "Wybierz-kolego-numer-zgloszenia-nastepnym-razem-czy-cos").replace(".", "n").replace("/", "n")
         filename = f"{prefix}-F1-IP003-A-IT Zgloszenie-pomocy-technicznej-systemow-informatyki-metrologicznej-(SIM).docx"
         cleaned_name = re.sub(r'[\\/*?:"<>|]', "", filename)
 
