@@ -3,16 +3,16 @@ from django.db import models
 TERMINAL_CHOICES = (
     ('Office', 'Office'),
     ('OT', 'OT'),
-    ('Isolated', 'Isolated'),
-    ('None', 'None')
+    ('Odizolowane', 'Odizolowane'),
+    ('Brak', 'Brak')
 )
 
 DEVICE_CHOICES = (
     ('PC', 'PC'),
     ('Laptop', 'Laptop'),
     ('Monitor', 'Monitor'),
-    ('Air Conditioner', 'Air Conditioner'),
-    ('Other', 'Other')
+    ('Klimatyzator', 'Klimatyzator'),
+    ('Inne', 'Inne')
 )
 
 ZAKLAD_CHOICES = [

@@ -13,7 +13,7 @@ def generate_docx(modeladmin, request, queryset):
     # Convert queryset to DataFrame
     ids = [obj.id for obj in queryset]
     with connection.cursor() as cursor:
-        cursor.execute(f"SELECT * FROM myapp_formdata WHERE id IN ({','.join(map(str, ids))})")
+        cursor.execute(f"SELECT * FROM bazadanych_zgloszenie WHERE id IN ({','.join(map(str, ids))})")
         rows = cursor.fetchall()
         columns = [col[0] for col in cursor.description]
         df = pd.DataFrame(rows, columns=columns)
