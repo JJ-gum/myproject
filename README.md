@@ -16,3 +16,5 @@ do automatycznego generowania raportów zgłoszeń w formacie `.docx`
 ```
 pip install Django pandas python-docx
 ```
+## Użytkowanie programu:
+### Widok główny:
