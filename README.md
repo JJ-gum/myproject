@@ -20,6 +20,7 @@ Program wykorzystuje Panel Administracyjny Django do funkcjonowania.
 ```
 pip install Django pandas python-docx
 ```
+
 ## Użytkowanie programu:
 ### Widok główny:
 Składa się tylko z informacji o tym, że trzeba użytkować program
@@ -30,6 +31,16 @@ Dostępny jest tylko po zalogowaniu się hasłem.
 Obsługuje całą funkcjonalność programu.
 Dzieli się na 2 główne widoki:
 #### Baza Danych
-
+Dzieli się na 3 podstrony:
+- Systemy operacyjne,
+- Urządzenia,
+- Zgłoszenia.
+Obsługa tych podstron będzie omówiona poniżej.
 
 #### Uwierzytelnianie i Autoryzacja
+W tym miejscu można edytować listę użytkowników 
+oraz przyznawać im uprawnienia
+
+## Systemy Operacyjne
+Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 
+otworzenie i edycję listy wszystkich systemów operacyjnych
