@@ -9,10 +9,10 @@ import re
 import pandas as pd
 
 
-# funkcja generująca dokument .docx.
+# Funkcja generująca dokument .docx.
 # WYMAGA SZABLONU W ODPOWIEDNIM MIEJSCU
 def generate_docx(modeladmin, request, queryset):
-    # przeksztalcenie danych w format odpowiedni do wydruku
+    # przekształcenie danych w format odpowiedni do wydruku
     ids = [obj.id for obj in queryset]
     # pobranie danych z bazy danych
     with connection.cursor() as cursor:
@@ -20,7 +20,7 @@ def generate_docx(modeladmin, request, queryset):
         rows = cursor.fetchall()
         columns = [col[0] for col in cursor.description]
         df = pd.DataFrame(rows, columns=columns)
-    # zapisywanie danych z bazy danych do opowiednich komórek pliku formatki
+    # zapisywanie danych z bazy danych do odpowiednich komórek pliku formatki
     for index, row in df.iterrows():
         # TA FORMATKA MUSI BYĆ WE WSKAZANEJ LOKALIZACJI Z WSKAZANĄ NAZWĄ!!!
         # KAŻDA ZMIANA FORMATKI BĘDZIE SKUTKOWAŁA ZMIANĄ PONIŻSZEGO KODU!
@@ -82,10 +82,11 @@ def generate_docx(modeladmin, request, queryset):
         else:
             table2.cell(16, 0).paragraphs[-1].text = str(row['potwierdzenie_data'])
 
-        # Przygotowanie
+        # Przygotowanie nazwy pliku (usuwanie z niej znaków zabronionych i dodanie odpowiedniego sufixa)
         prefix = (row['nr_zgloszenia'] or "Wybierz-kolego-numer-zgloszenia-nastepnym-razem-czy-cos").replace(".", "n").replace("/", "n")
         filename = f"{prefix}-F1-IP003-A-IT Zgloszenie-pomocy-technicznej-systemow-informatyki-metrologicznej-(SIM).docx"
         cleaned_name = re.sub(r'[\\/*?:"<>|]', "", filename)
+        # Zapisanie pliku
         buffer = BytesIO()
         document.save(buffer)
         buffer.seek(0)
@@ -95,18 +96,21 @@ def generate_docx(modeladmin, request, queryset):
         return response
 
 
+# Opis funkcji generującej dokument — napis wyświetlany przy wybraniu tej opcji w panelu administratora
 generate_docx.short_description = "Wygeneruj formularz w formacie .docx"
 
 
+# Ustawienia dotyczące wyświetlania Zgłoszenia w panelu administratora
 @admin.register(Zgloszenie)
-class ZgloszenieFormularz(admin.ModelAdmin):
+class Zgloszenie(admin.ModelAdmin):
     list_display = ('id', 'nr_EZD_ID_koszulki', 'nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'urzadzenie_id',)
     search_fields = ('nr_zgloszenia', 'data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'nr_EZD_ID_koszulki', 'urzadzenie_id')
-    list_filter = ('data_zgloszenia', 'nazwa_zakladu', 'laboratorium', 'urzadzenie_id')
+    list_filter = ('data_zgloszenia', 'nazwa_zakladu', 'laboratorium',)
     ordering = ('-id',)
     actions = [generate_docx]
 
 
+# Ustawienia dotyczące wyświetlania Urządzenia w panelu administratora
 @admin.register(Urzadzenie)
 class Urzadzenie(admin.ModelAdmin):
     list_display = ('pim_id', 'data_rejestracji', 'laboratorium', 'numer_ewidencyjny')
@@ -114,4 +118,5 @@ class Urzadzenie(admin.ModelAdmin):
     ordering = ('-pim_id',)
 
 
+# Ustawienia dotyczące wyświetlania Systemu operacyjnego w panelu administratora
 admin.site.register(SystemOperacyjny)

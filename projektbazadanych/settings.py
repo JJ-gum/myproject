@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Warunek umożliwiający wyświetlanie bazy danych w przeglądarce
     'bazadanych'
 ]
 
@@ -48,7 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+# Odwołanie do rootu projektu
 ROOT_URLCONF = 'projektbazadanych.urls'
 
 TEMPLATES = [
@@ -102,9 +103,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
-
+# Wybranie języka polskiego
 LANGUAGE_CODE = 'pl-pl'
-
+# i polskiej strefy czasowej w panelu administratora
 TIME_ZONE = 'Europe/warsaw'
 
 USE_I18N = True

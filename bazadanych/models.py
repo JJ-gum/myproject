@@ -1,5 +1,7 @@
 from django.db import models
 
+# Lista dostępnych opcji przy wyborze połączenia sieciowego
+# Dotyczy Urządzenia
 TERMINAL_CHOICES = (
     ('Office', 'Office'),
     ('OT', 'OT'),
@@ -7,6 +9,8 @@ TERMINAL_CHOICES = (
     ('Brak', 'Brak')
 )
 
+# Lista dostępnych opcji przy wyborze typu urządzenia
+# Dotyczy Urządzenia
 DEVICE_CHOICES = (
     ('PC', 'PC'),
     ('Laptop', 'Laptop'),
@@ -15,6 +19,8 @@ DEVICE_CHOICES = (
     ('Inne', 'Inne')
 )
 
+# Lista dostępnych opcji przy wyborze zakładu GUM
+# Dotyczy Zgłoszenia
 ZAKLAD_CHOICES = [
     ('Zakład Badań Certyfikacyjnych (Z1)', 'Zakład Badań Certyfikacyjnych (Z1)'),
     ('Zakład Chemii Fizycznej i Środowiska (Z2)', 'Zakład Chemii Fizycznej i Środowiska (Z2)'),
@@ -24,6 +30,8 @@ ZAKLAD_CHOICES = [
     ('Zakład Technologii Cyfrowych (Z6)', 'Zakład Technologii Cyfrowych (Z6)')
 ]
 
+# Lista dostępnych opcji przy wyborze laboratorium GUM
+# Dotyczy Zgłoszenia
 LABORATORIUM_CHOICES = [
     ('Laboratorium Bezpieczeństwa Ruchu Drogowego (Z11)', 'Laboratorium Bezpieczeństwa Ruchu Drogowego (Z11)'),
     ('Laboratorium Badań Oprogramowania (Z12)', 'Laboratorium Badań Oprogramowania (Z12)'),
@@ -56,6 +64,8 @@ LABORATORIUM_CHOICES = [
     ('Laboratorium Sztucznej Inteligencji (Z62)', 'Laboratorium Sztucznej Inteligencji (Z62)')
 ]
 
+# Lista dostępnych opcji przy wyborze opcji dostępu do sieci
+# Dotyczy Zgłoszenia
 DOSTEP_DO_SIECI_CHOICES = [
     ('dodanie uprawnień', 'dodanie uprawnień'),
     ('dodanie dostępu', 'dodanie dostępu'),
@@ -79,6 +89,8 @@ DOSTEP_DO_SIECI_CHOICES = [
     ('odebranie systemu', 'odebranie systemu')
 ]
 
+# Lista dostępnych opcji przy wyborach istotności problemu
+# Dotyczy Zgłoszenia
 ISTOTNOSC_CHOICES = [
     ('Bardzo mała', 'Bardzo mała'),
     ('Mała', 'Mała'),
@@ -88,37 +100,59 @@ ISTOTNOSC_CHOICES = [
 ]
 
 
+# Klasa odpowiadająca za zapisanie systemu operacyjnego w bazie danych
 class SystemOperacyjny(models.Model):
-    os_type = models.CharField(db_column="Operating System", primary_key=True, max_length=120)
+    typ_system_operacyjny = models.CharField(db_column="Operating System", primary_key=True, max_length=120)
 
     def __str__(self):
-        return self.os_type
+        return self.typ_system_operacyjny
 
 
+# Klasa odpowiadająca za zapisanie informacji o urządzeniu w bazie danych
 class Urzadzenie(models.Model):
+    # ID — odpowiada za szeregowanie urządzeń w bazie danych, jest głównym kluczem
     pim_id = models.AutoField(db_column="PIM ID", primary_key=True)
+    # Laboratorium, do którego należy dane urządzenie
     laboratorium = models.CharField(db_column="Lab Name", max_length=200, blank=True, null=True)
+    # Nr pomieszczenia, w którym znajduje się urządzenie
     nr_pomieszczenia = models.CharField(db_column="Room number", max_length=40, blank=True, null=True)
+    # Opis urządzenia odpowiadający za przedstawienie informacji na jego temat, niemających własnej rubryki
     opis = models.TextField(db_column="Terminal Description", blank=True, null=True)
+    # Nr ewidencyjny służący do katalogowania urządzeń
     numer_ewidencyjny = models.CharField(db_column="Inventory Number", max_length=40, blank=True, null=True)
+    # Typ urządzenia do wybrania z opcji dostępnych w DEVICE_CHOICES
     typ_urzadzenia = models.CharField(db_column="Device Type", max_length=40, choices=DEVICE_CHOICES, blank=True, null=True)
+    # System operacyjny przechowywany w tabeli "Operating System" w bazie danych
     system_operacyjny = models.ManyToManyField(SystemOperacyjny, db_column="Operating System", blank=True)
+    # CPU — każdy wie co to
     cpu = models.CharField(db_column="CPU", max_length=40, blank=True, null=True)
+    # RAM — każdy wie co to
     ram = models.CharField(db_column="RAM", max_length=40, blank=True, null=True)
+    # Ilość zainstalowanej pamięci dyskowej
     pamiec_dysku = models.CharField(db_column="Drive Memory", max_length=40, blank=True, null=True)
+    # Dodatkowe komponenty niewymienione wyżej, a znajdujące się w urządzeniu
     dodatkowe_komponenty = models.TextField(db_column="Additional Components", blank=True, null=True)
+    # Specjalistyczne oprogramowanie zainstalowane na komputerze
     oprogramowanie_specjalne = models.TextField(db_column="Specialized Software", blank=True, null=True)
+    # Konta użytkownika dostępne na urządzeniu
     konta = models.TextField(db_column="Accounts", blank=True, null=True)
+    # Data rejestracji urządzenia w systemie
     data_rejestracji = models.DateField(db_column="Date of Registry", null=True)
+    # Nr gniazda LAN
     nr_gniazda = models.CharField(db_column="Socket Number", max_length=40, blank=True, null=True)
+    # Rodzaj gniazda LAN
     typ_gniazd = models.CharField(db_column="Socket Type", max_length=120, blank=True, null=True)
+    # Opiekun odpowiadający za dane urządzenie
     opiekun_1 = models.CharField(db_column="Supervisor 1", max_length=40, null=True)
+    # Opiekun odpowiadający za dane urządzenie
     opiekun_2 = models.CharField(db_column="Supervisor 2", max_length=40, blank=True, null=True)
+    # Typ podłączenia urządzenia do wybrania z opcji dostępnych w TERMINAL_CHOICES
     typ_polaczenia_sieciowego = models.CharField(db_column="Terminal Connection Type", max_length=40, choices=TERMINAL_CHOICES, blank=True, null=True)
     notatki = models.TextField(blank=True, null=True)
 
+    # Wywołanie tej klasy zwraca string składający się z nazwy laboratorium, nr pomieszczenia, typu urządzenia i ID
     def __str__(self):
-        return f"{self.laboratorium} - {self.nr_pomieszczenia} - {self.typ_urzadzenia}"
+        return f"{self.laboratorium} - {self.nr_pomieszczenia} - {self.typ_urzadzenia} - {self.pim_id}"
 
 
 class Zgloszenie(models.Model):
@@ -158,4 +192,3 @@ class Zgloszenie(models.Model):
 
     def __str__(self):
         return self.nr_zgloszenia if self.nr_zgloszenia else 'No ID'
-
