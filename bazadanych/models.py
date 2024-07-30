@@ -115,6 +115,7 @@ class Urzadzenie(models.Model):
     opiekun_1 = models.CharField(db_column="Supervisor 1", max_length=40, null=True)
     opiekun_2 = models.CharField(db_column="Supervisor 2", max_length=40, blank=True, null=True)
     typ_polaczenia_sieciowego = models.CharField(db_column="Terminal Connection Type", max_length=40, choices=TERMINAL_CHOICES, blank=True, null=True)
+    notatki = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.laboratorium} - {self.nr_pomieszczenia} - {self.typ_urzadzenia}"
@@ -153,6 +154,7 @@ class Zgloszenie(models.Model):
     potwierdzenie_podpis = models.CharField(max_length=100, blank=True, null=True)
     potwierdzenie_data = models.DateField(blank=True, null=True)
     urzadzenie_id = models.ForeignKey(Urzadzenie, db_column="PIM ID", on_delete=models.CASCADE, blank=True, null=True)
+    notatki = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nr_zgloszenia if self.nr_zgloszenia else 'No ID'
