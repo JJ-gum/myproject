@@ -167,6 +167,7 @@ def generate_docx(modeladmin, request, queryset):
         rows = cursor.fetchall()
         columns = [col[0] for col in cursor.description]
         df = pd.DataFrame(rows, columns=columns)
+    buffer = BytesIO()
     # zapisywanie danych z bazy danych do odpowiednich komórek pliku formatki
     for index, row in df.iterrows():
         # TA FORMATKA MUSI BYĆ WE WSKAZANEJ LOKALIZACJI Z WSKAZANĄ NAZWĄ!!!
@@ -217,7 +218,7 @@ def generate_docx(modeladmin, request, queryset):
         else:
             table2.cell(13, 0).paragraphs[-1].text = str(row['kierownik_km_data'])
         table2.cell(14, 0).paragraphs[1].add_run(row['realizacja_opis'] or "")
-        table2.cell(15, 0).paragraphs[-1].text = row['realizacja_podpis'] or ""
+        table2.cell(15, 0).paragraphs[0].text = row['realizacja_podpis'] or ""
         if str(row['realizacja_data']) == "None":
             table2.cell(15, 0).paragraphs[-1].text = ""
         else:
@@ -234,7 +235,6 @@ def generate_docx(modeladmin, request, queryset):
         filename = f"{prefix}-F1-IP003-A-IT Zgloszenie-pomocy-technicznej-systemow-informatyki-metrologicznej-(SIM).docx"
         cleaned_name = re.sub(r'[\\/*?:"<>|]', "", filename)
         # Zapisanie pliku
-        buffer = BytesIO()
         document.save(buffer)
         buffer.seek(0)
         response = HttpResponse(buffer, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
