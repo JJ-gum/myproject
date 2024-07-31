@@ -28,8 +28,7 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
         'Typ Połączenia Sieciowego', 'Notatki'
     ])
 
-    urzadzenia = Urzadzenie.objects.all()
-    for urzadzenie in urzadzenia:
+    for urzadzenie in queryset:
         # Pobiera wartości z pola wiele-do-wielu jako ciąg rozdzielony przecinkami
         system_operacyjny = ', '.join([sys.typ_system_operacyjny for sys in urzadzenie.system_operacyjny.all()])
 
