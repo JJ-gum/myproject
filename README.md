@@ -45,16 +45,19 @@ oraz przyznawać im uprawnienia.
 Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 
 otworzenie i edycję listy wszystkich systemów operacyjnych.
 
-Systemy są uszeregowane w kolejności dodania, można je usunąć 
-za pomocą rozwijanej listy bądź dodać za pomocą `+` znajdującego
+Systemy są uszeregowane w kolejności dodania, 
+można wyeksportować za pomocą rozwijanej listy
+zaznaczone systemy do pliku `.csv` lub je usunąć 
+bądź dodać za pomocą `+` znajdującego
 się po prawej stronie ekranu.
 
 ## Urządzenia
 Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 
 otworzenie i edycję listy wszystkich urządzeń.
 
-Urządzenia są uszeregowane w kolejności dodania, można je usunąć 
-za pomocą rozwijanej listy bądź dodać za pomocą `+` znajdującego
+Urządzenia są uszeregowane w kolejności dodania, można wyeksportować 
+za pomocą rozwijanej listy zaznaczone systemy do pliku `.csv` 
+lub je usunąć bądź dodać za pomocą `+` znajdującego
 się po prawej stronie ekranu. Oprócz ID wyświetlane są także 
 **data rejestracji**, **laboratorium** oraz **numer ewidencyjny**.
 Wyświetlane zgłoszenia można sortować po każdym z wymienionych pól.
@@ -64,7 +67,8 @@ Kliknięcie tej opcji w Panelu Administracyjnym umożliwia
 otworzenie i edycję listy wszystkich zgłoszeń.
 
 Zgłoszenia są uszeregowane w kolejności dodania, można wygenerować
-zgłoszenie w formacie `.docx` lub usunąć za pomocą rozwijanej listy 
+zgłoszenie w formacie `.docx`, wyeksportować zaznaczone systemy do
+pliku `.csv` lub usunąć za pomocą rozwijanej listy 
 bądź dodać za pomocą `+` znajdującego się po prawej stronie ekranu. 
 Oprócz ID wyświetlane są także 
 **numer EZD ID koszulki**, **numer zgłoszenia**, **data zgłoszenia**,

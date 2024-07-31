@@ -10,16 +10,17 @@ from django.db import connection
 from io import BytesIO
 
 
-def export_urzadzenie_to_csv(modeladmin, request, queryset) :
-    # Create a CSV response
+# Funkcja generująca plik csv dla Urządzenia
+def export_urzadzenie_to_csv(modeladmin, request, queryset):
+    # Tworzy odpowiedź HTTP z typem zawartości 'text/csv'
     response = HttpResponse(content_type='text/csv')
+    # Generowanie nazw pliku z aktualną datą i czasem
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     filename = f'urzadzenia_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
+    # Tworzenie nazw kolumn
     writer = csv.writer(response)
-
-    # Write the header row
     writer.writerow([
         'PIM ID', 'Laboratorium', 'Nr Pomieszczenia', 'Opis', 'Nr Ewidencyjny', 'Typ Urządzenia',
         'System Operacyjny', 'CPU', 'RAM', 'Pamięć Dysku', 'Dodatkowe Komponenty', 'Oprogramowanie Specjalne',
@@ -27,14 +28,12 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset) :
         'Typ Połączenia Sieciowego', 'Notatki'
     ])
 
-    # Query the Urzadzenie objects
     urzadzenia = Urzadzenie.objects.all()
-
     for urzadzenie in urzadzenia:
-        # Retrieve many-to-many field values as a comma-separated string
+        # Pobiera wartości z pola wiele-do-wielu jako ciąg rozdzielony przecinkami
         system_operacyjny = ', '.join([sys.typ_system_operacyjny for sys in urzadzenie.system_operacyjny.all()])
 
-        # Write each object's data row
+        # Zapisywanie danych do pliku CSV
         writer.writerow([
             urzadzenie.pim_id,
             urzadzenie.laboratorium or '',
@@ -61,16 +60,16 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset) :
     return response
 
 
+# Funkcja generująca plik csv dla Zgłoszenia
 def export_zgloszenie_to_csv(modeladmin, request, queryset):
-    # Create a CSV response
     response = HttpResponse(content_type='text/csv')
+    # Generowanie nazw pliku z aktualną datą i czasem
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     filename = f'zgloszenia_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
+    # Tworzenie nagłówków kolumn
     writer = csv.writer(response)
-
-    # Write the header row
     writer.writerow([
         'ID', 'EZD ID Koszulki', 'Nr Zgłoszenia', 'Nr EZD', 'Data Zgłoszenia', 'Nazwa Zakładu', 'Laboratorium',
         'Zgłaszający', 'Telefon', 'Nr Pomieszczenia', 'Nazwa Urządzenia', 'Dostęp do Sieci', 'Nr Ewidencyjny',
@@ -81,14 +80,11 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
         'PIM ID Urządzenia', 'Notatki'
     ])
 
-    # Query the Zgloszenie objects
     zgloszenia = Zgloszenie.objects.all()
-
     for zgloszenie in zgloszenia:
-        # Retrieve related object field values
         urzadzenie_id = zgloszenie.urzadzenie_id.pim_id if zgloszenie.urzadzenie_id else ''
 
-        # Write each object's data row
+        # Zapisywanie danych każdego zgłoszenia w pliku CSV
         writer.writerow([
             zgloszenie.id,
             zgloszenie.nr_EZD_ID_koszulki or '',
@@ -128,27 +124,24 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
     return response
 
 
+# Funkcja generująca plik csv dla Systemu operacyjnego
 def export_system_operacyjny_to_csv(modeladmin, request, queryset):
-    # Create a CSV response
     response = HttpResponse(content_type='text/csv')
 
-    # Generate the current datetime for the filename
+    # Generowanie nazw pliku z aktualną datą i czasem
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     filename = f'systemy_operacyjne_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
+    # Tworzenie nagłówków do pliku CSV
     writer = csv.writer(response)
-
-    # Write the header row with Polish names
     writer.writerow([
         'Typ Systemu Operacyjnego'
     ])
 
-    # Query the SystemOperacyjny objects
-    system_operacyjne = SystemOperacyjny.objects.all()
-
-    for system_operacyjny in system_operacyjne:
-        # Write each object's data row
+    # Pobieranie wszystkich Systemy operacyjne i zapisuje je do CSV
+    systemy_operacyjne = SystemOperacyjny.objects.all()
+    for system_operacyjny in systemy_operacyjne:
         writer.writerow([
             system_operacyjny.typ_system_operacyjny
         ])
