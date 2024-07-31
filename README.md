@@ -39,8 +39,34 @@ Obsługa tych podstron będzie omówiona poniżej.
 
 #### Uwierzytelnianie i Autoryzacja
 W tym miejscu można edytować listę użytkowników 
-oraz przyznawać im uprawnienia
+oraz przyznawać im uprawnienia.
 
 ## Systemy Operacyjne
 Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 
-otworzenie i edycję listy wszystkich systemów operacyjnych
+otworzenie i edycję listy wszystkich systemów operacyjnych.
+
+Systemy są uszeregowane w kolejności dodania, można je usunąć 
+za pomocą rozwijanej listy bądź dodać za pomocą `+` znajdującego
+się po prawej stronie ekranu.
+
+## Urządzenia
+Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 
+otworzenie i edycję listy wszystkich urządzeń.
+
+Urządzenia są uszeregowane w kolejności dodania, można je usunąć 
+za pomocą rozwijanej listy bądź dodać za pomocą `+` znajdującego
+się po prawej stronie ekranu. Oprócz ID wyświetlane są także 
+**data rejestracji**, **laboratorium** oraz **numer ewidencyjny**.
+
+## Zgłoszenia
+Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 
+otworzenie i edycję listy wszystkich zgłoszeń.
+
+Zgłoszenia są uszeregowane w kolejności dodania, można wygenerować
+zgłoszenie w formacie `.docx` lub usunąć za pomocą rozwijanej listy 
+bądź dodać za pomocą `+` znajdującego się po prawej stronie ekranu. 
+Oprócz ID wyświetlane są także 
+**numer EZD ID koszulki**, **numer zgłoszenia**, **data zgłoszenia**,
+**nazwa zakładu**, **nazwa laboratorium** i **ID urządzenia**
+będącego przedmiotem zgłoszenia. Wyświetlane zgłoszenia można
+sortować i filtrować po każdym z wymienionych pól.

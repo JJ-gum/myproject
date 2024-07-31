@@ -115,6 +115,7 @@ class Zgloszenie(admin.ModelAdmin):
 class Urzadzenie(admin.ModelAdmin):
     list_display = ('pim_id', 'data_rejestracji', 'laboratorium', 'numer_ewidencyjny')
     search_fields = ('pim_id', 'data_rejestracji', 'numer_ewidencyjny')
+    list_filter = ('laboratorium',)
     ordering = ('-pim_id',)
 
 
