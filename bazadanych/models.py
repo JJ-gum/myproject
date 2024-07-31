@@ -105,6 +105,11 @@ class SystemOperacyjny(models.Model):
     # Rodzaj systemu operacyjnego
     typ_system_operacyjny = models.CharField(db_column="Operating System", primary_key=True, max_length=120)
 
+    # Definiowanie właściwej nazwy widocznej w panelu administratora
+    class Meta:
+        verbose_name = 'System operacyjny'  # Pojedyncza nazwa
+        verbose_name_plural = 'Systemy operacyjne'  # Forma mnoga
+
     # Wywołanie klasy zwraca rodzaj systemu operacyjnego
     def __str__(self):
         return self.typ_system_operacyjny
@@ -153,9 +158,10 @@ class Urzadzenie(models.Model):
     # Notatki dla administratora, nie są wyświetlane nigdzie poza widokiem administratora
     notatki = models.TextField(blank=True, null=True)
 
-    # Wywołanie tej klasy int(Urządzenie) zwraca ID urządzenia
-    def __int__(self):
-        return self.pim_id
+    # Definiowanie właściwej nazwy widocznej w panelu administratora
+    class Meta:
+        verbose_name = 'Urządzenie'  # Pojedyncza nazwa
+        verbose_name_plural = 'Urządzenia'  # Forma mnoga
 
     # Wywołanie tej klasy str(Urządzenie) zwraca string składający się z:
     # Nazwy laboratorium, Nr pomieszczenia, Typu urządzenia, ID urządzenia
@@ -242,6 +248,11 @@ class Zgloszenie(models.Model):
     # Notatki dla administratora, nie są wyświetlane nigdzie poza widokiem administratora
     # Nie znajduje się na końcowym formularzu
     notatki = models.TextField(blank=True, null=True)
+
+    # Definiowanie właściwej nazwy widocznej w panelu administratora
+    class Meta:
+        verbose_name = 'Zgłoszenie'  # Pojedyncza nazwa
+        verbose_name_plural = 'Zgłoszenia'  # Forma mnoga
 
     # Odwołanie się do tej klasy zwraca nr zgłoszenia
     def __str__(self):
