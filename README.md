@@ -57,6 +57,7 @@ Urządzenia są uszeregowane w kolejności dodania, można je usunąć
 za pomocą rozwijanej listy bądź dodać za pomocą `+` znajdującego
 się po prawej stronie ekranu. Oprócz ID wyświetlane są także 
 **data rejestracji**, **laboratorium** oraz **numer ewidencyjny**.
+Wyświetlane zgłoszenia można sortować po każdym z wymienionych pól.
 
 ## Zgłoszenia
 Kliknięcie tej opcji w Panelu Administracyjnym umożliwia 

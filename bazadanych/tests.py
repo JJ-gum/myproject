@@ -1,8 +1,13 @@
 from django.test import TestCase
-from .models import Urzadzenie, SystemOperacyjny
-from .admin import Zgloszenie
-from django.contrib import admin
+from .models import Urzadzenie, SystemOperacyjny, Zgloszenie
+from django.forms import ModelForm
 from django.urls import reverse
+
+
+class ZgloszenieModelForm(ModelForm):
+    class Meta:
+        model = Zgloszenie
+        fields = ['nr_zgloszenia', 'nazwa_zakladu', 'zglaszajacy', 'data_zgloszenia']
 
 
 class UrzadzenieModelTest(TestCase):
@@ -25,7 +30,7 @@ class UrzadzenieModelTest(TestCase):
         self.assertEqual(urzadzenie.system_operacyjny.count(), 2)
 
 
-class ZgloszenieFormularzTest(TestCase):
+class ZgloszenieTest(TestCase):
     def test_zgloszenie_form_valid(self):
         form_data = {
             'nr_zgloszenia': '12345',
@@ -33,7 +38,7 @@ class ZgloszenieFormularzTest(TestCase):
             'zglaszajacy': 'Jan Kowalski',
             'data_zgloszenia': '2024-07-30',
         }
-        form = Zgloszenie(data=form_data)
+        form = ZgloszenieModelForm(data=form_data)  # Use ZgloszenieModelForm
         self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
 
 
@@ -42,6 +47,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse('default_message'))
         self.assertEqual(response.status_code,200)
         self.assertContains(response, "Korzystaj ze strony administratora")
+
 
 class TemplateTest(TestCase):
     def test_default_message_template(self):
