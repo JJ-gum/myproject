@@ -2,7 +2,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
 import pandas as pd
-import csv
+import unicodecsv as csv
 from django.http import HttpResponse
 from .models import Urzadzenie, Zgloszenie, SystemOperacyjny
 from datetime import datetime

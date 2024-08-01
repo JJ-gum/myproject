@@ -14,11 +14,12 @@ Program wykorzystuje Panel Administracyjny Django do funkcjonowania.
 - Django 5.0.7 lub nowsza,
 - pandas 2.2.2 lub nowsza,
 - python-docx 1.1.2 lub nowsza,
+- unicodecsv 0.14.1 lub nowsza,
 - Oczywiście wymagany jest też Python 3.12 lub nowszy.
 
 ### Instalacja:
 ```
-pip install Django pandas python-docx
+pip install Django pandas python-docx unicodecsv
 ```
 
 ## Użytkowanie programu:
