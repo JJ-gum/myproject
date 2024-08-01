@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Wybranie języka polskiego
 LANGUAGE_CODE = 'pl-pl'
 # i polskiej strefy czasowej w panelu administratora
-TIME_ZONE = 'Europe/warsaw'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 
