@@ -19,8 +19,8 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
     filename = f'urzadzenia_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    # Tworzenie nazw kolumn
-    writer = csv.writer(response)
+    # Tworzenie nazw kolumn z odpowiednimi ustawieniami quoting
+    writer = csv.writer(response, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow([
         'PIM ID', 'Laboratorium', 'Nr Pomieszczenia', 'Opis', 'Nr Ewidencyjny', 'Typ Urządzenia',
         'System Operacyjny', 'CPU', 'RAM', 'Pamięć Dysku', 'Dodatkowe Komponenty', 'Oprogramowanie Specjalne',
@@ -30,30 +30,36 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
 
     for urzadzenie in queryset:
         # Pobiera wartości z pola wiele-do-wielu jako ciąg rozdzielony przecinkami
-        system_operacyjny = ', '.join([sys.typ_system_operacyjny for sys in urzadzenie.system_operacyjny.all()])
+        system_operacyjny = ', '.join([sys.typ_system_operacyjny.replace('\n', ' ').replace('\r', ' ') for sys in urzadzenie.system_operacyjny.all()])
+
+        # Funkcja pomocnicza do czyszczenia pól tekstowych
+        def sanitize_field(field):
+            if field is None:
+                return ''
+            return str(field).replace('\n', ' ').replace('\r', ' ')
 
         # Zapisywanie danych do pliku CSV
         writer.writerow([
-            urzadzenie.pim_id,
-            urzadzenie.laboratorium or '',
-            urzadzenie.nr_pomieszczenia or '',
-            urzadzenie.opis or '',
-            urzadzenie.numer_ewidencyjny or '',
-            urzadzenie.typ_urzadzenia or '',
-            system_operacyjny,
-            urzadzenie.cpu or '',
-            urzadzenie.ram or '',
-            urzadzenie.pamiec_dysku or '',
-            urzadzenie.dodatkowe_komponenty or '',
-            urzadzenie.oprogramowanie_specjalne or '',
-            urzadzenie.konta or '',
-            urzadzenie.data_rejestracji or '',
-            urzadzenie.nr_gniazda or '',
-            urzadzenie.typ_gniazd or '',
-            urzadzenie.opiekun_1 or '',
-            urzadzenie.opiekun_2 or '',
-            urzadzenie.typ_polaczenia_sieciowego or '',
-            urzadzenie.notatki or ''
+            sanitize_field(urzadzenie.pim_id),
+            sanitize_field(urzadzenie.laboratorium),
+            sanitize_field(urzadzenie.nr_pomieszczenia),
+            sanitize_field(urzadzenie.opis),
+            sanitize_field(urzadzenie.numer_ewidencyjny),
+            sanitize_field(urzadzenie.typ_urzadzenia),
+            sanitize_field(system_operacyjny),
+            sanitize_field(urzadzenie.cpu),
+            sanitize_field(urzadzenie.ram),
+            sanitize_field(urzadzenie.pamiec_dysku),
+            sanitize_field(urzadzenie.dodatkowe_komponenty),
+            sanitize_field(urzadzenie.oprogramowanie_specjalne),
+            sanitize_field(urzadzenie.konta),
+            sanitize_field(urzadzenie.data_rejestracji),
+            sanitize_field(urzadzenie.nr_gniazda),
+            sanitize_field(urzadzenie.typ_gniazd),
+            sanitize_field(urzadzenie.opiekun_1),
+            sanitize_field(urzadzenie.opiekun_2),
+            sanitize_field(urzadzenie.typ_polaczenia_sieciowego),
+            sanitize_field(urzadzenie.notatki)
         ])
 
     return response
@@ -67,8 +73,8 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
     filename = f'zgloszenia_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    # Tworzenie nagłówków kolumn
-    writer = csv.writer(response)
+    # Tworzenie nagłówków kolumn z odpowiednimi ustawieniami quoting
+    writer = csv.writer(response, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow([
         'ID', 'EZD ID Koszulki', 'Nr Zgłoszenia', 'Nr EZD', 'Data Zgłoszenia', 'Nazwa Zakładu', 'Laboratorium',
         'Zgłaszający', 'Telefon', 'Nr Pomieszczenia', 'Nazwa Urządzenia', 'Dostęp do Sieci', 'Nr Ewidencyjny',
@@ -79,45 +85,51 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
         'PIM ID Urządzenia', 'Notatki'
     ])
 
-    zgloszenia = Zgloszenie.objects.all()
+    # Funkcja pomocnicza do czyszczenia pól tekstowych
+    def sanitize_field(field):
+        if field is None:
+            return ''
+        return str(field).replace('\n', ' ').replace('\r', ' ')
+
+    zgloszenia = queryset.objects.all()
     for zgloszenie in zgloszenia:
-        urzadzenie_id = zgloszenie.urzadzenie_id.pim_id if zgloszenie.urzadzenie_id else ''
+        urzadzenie_id = sanitize_field(zgloszenie.urzadzenie_id.pim_id) if zgloszenie.urzadzenie_id else ''
 
         # Zapisywanie danych każdego zgłoszenia w pliku CSV
         writer.writerow([
             zgloszenie.id,
-            zgloszenie.nr_EZD_ID_koszulki or '',
-            zgloszenie.nr_zgloszenia or '',
-            zgloszenie.nr_EZD or '',
-            zgloszenie.data_zgloszenia or '',
-            zgloszenie.nazwa_zakladu or '',
-            zgloszenie.laboratorium or '',
-            zgloszenie.zglaszajacy or '',
-            zgloszenie.telefon or '',
-            zgloszenie.nr_pomieszczenia or '',
-            zgloszenie.nazwa_urzadzenia or '',
-            zgloszenie.dostep_do_sieci or '',
-            zgloszenie.nr_ewidencyjny or '',
-            zgloszenie.nr_gniazdka_lan or '',
-            zgloszenie.opis_zgloszenia or '',
-            zgloszenie.oczekiwania or '',
-            zgloszenie.istotnosc_pouf or '',
-            zgloszenie.istotnosc_integr or '',
-            zgloszenie.istotnosc_dost or '',
-            zgloszenie.zglaszajacy_podpis or '',
-            zgloszenie.kierownik_lim_opinia or '',
-            zgloszenie.kierownik_lim_podpis or '',
-            zgloszenie.kierownik_lim_data or '',
-            zgloszenie.kierownik_km_opinia or '',
-            zgloszenie.kierownik_km_podpis or '',
-            zgloszenie.kierownik_km_data or '',
-            zgloszenie.realizacja_opis or '',
-            zgloszenie.realizacja_podpis or '',
-            zgloszenie.realizacja_data or '',
-            zgloszenie.potwierdzenie_podpis or '',
-            zgloszenie.potwierdzenie_data or '',
+            sanitize_field(zgloszenie.nr_EZD_ID_koszulki),
+            sanitize_field(zgloszenie.nr_zgloszenia),
+            sanitize_field(zgloszenie.nr_EZD),
+            sanitize_field(zgloszenie.data_zgloszenia),
+            sanitize_field(zgloszenie.nazwa_zakladu),
+            sanitize_field(zgloszenie.laboratorium),
+            sanitize_field(zgloszenie.zglaszajacy),
+            sanitize_field(zgloszenie.telefon),
+            sanitize_field(zgloszenie.nr_pomieszczenia),
+            sanitize_field(zgloszenie.nazwa_urzadzenia),
+            sanitize_field(zgloszenie.dostep_do_sieci),
+            sanitize_field(zgloszenie.nr_ewidencyjny),
+            sanitize_field(zgloszenie.nr_gniazdka_lan),
+            sanitize_field(zgloszenie.opis_zgloszenia),
+            sanitize_field(zgloszenie.oczekiwania),
+            sanitize_field(zgloszenie.istotnosc_pouf),
+            sanitize_field(zgloszenie.istotnosc_integr),
+            sanitize_field(zgloszenie.istotnosc_dost),
+            sanitize_field(zgloszenie.zglaszajacy_podpis),
+            sanitize_field(zgloszenie.kierownik_lim_opinia),
+            sanitize_field(zgloszenie.kierownik_lim_podpis),
+            sanitize_field(zgloszenie.kierownik_lim_data),
+            sanitize_field(zgloszenie.kierownik_km_opinia),
+            sanitize_field(zgloszenie.kierownik_km_podpis),
+            sanitize_field(zgloszenie.kierownik_km_data),
+            sanitize_field(zgloszenie.realizacja_opis),
+            sanitize_field(zgloszenie.realizacja_podpis),
+            sanitize_field(zgloszenie.realizacja_data),
+            sanitize_field(zgloszenie.potwierdzenie_podpis),
+            sanitize_field(zgloszenie.potwierdzenie_data),
             urzadzenie_id,
-            zgloszenie.notatki or ''
+            sanitize_field(zgloszenie.notatki)
         ])
 
     return response
@@ -132,17 +144,17 @@ def export_system_operacyjny_to_csv(modeladmin, request, queryset):
     filename = f'systemy_operacyjne_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    # Tworzenie nagłówków do pliku CSV
-    writer = csv.writer(response)
+    # Tworzenie nagłówków do pliku CSV z odpowiednimi ustawieniami quoting
+    writer = csv.writer(response, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow([
         'Typ Systemu Operacyjnego'
     ])
 
     # Pobieranie wszystkich Systemy operacyjne i zapisuje je do CSV
-    systemy_operacyjne = SystemOperacyjny.objects.all()
+    systemy_operacyjne = queryset.objects.all()
     for system_operacyjny in systemy_operacyjne:
         writer.writerow([
-            system_operacyjny.typ_system_operacyjny
+            system_operacyjny.typ_system_operacyjny.replace('\n', ' ').replace('\r', ' ')
         ])
 
     return response
