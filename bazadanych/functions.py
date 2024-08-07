@@ -91,8 +91,7 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
             return ''
         return str(field).replace('\n', ' ').replace('\r', ' ')
 
-    zgloszenia = queryset.objects.all()
-    for zgloszenie in zgloszenia:
+    for zgloszenie in queryset:
         urzadzenie_id = sanitize_field(zgloszenie.urzadzenie_id.pim_id) if zgloszenie.urzadzenie_id else ''
 
         # Zapisywanie danych każdego zgłoszenia w pliku CSV
