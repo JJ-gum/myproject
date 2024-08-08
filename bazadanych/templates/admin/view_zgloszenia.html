@@ -1,0 +1,32 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>{% trans "ID" %}</th>
+        <th>{% trans "Nr EZD ID Koszulki" %}</th>
+        <th>{% trans "Nr Zgloszenia" %}</th>
+        <th>{% trans "Data Zgloszenia" %}</th>
+        <th>{% trans "Nazwa Zakladu" %}</th>
+        <th>{% trans "Laboratorium" %}</th>
+        <th>{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for zgloszenie in zgloszenia %}
+      <tr>
+        <td>{{ zgloszenie.id }}</td>
+        <td>{{ zgloszenie.nr_EZD_ID_koszulki }}</td>
+        <td>{{ zgloszenie.nr_zgloszenia }}</td>
+        <td>{{ zgloszenie.data_zgloszenia }}</td>
+        <td>{{ zgloszenie.nazwa_zakladu }}</td>
+        <td>{{ zgloszenie.laboratorium }}</td>
+        <td><a href="{{ zgloszenie.admin_url }}">{% trans "Edit" %}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

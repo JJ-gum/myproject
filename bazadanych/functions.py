@@ -1,25 +1,24 @@
+from django.contrib import admin
+from django.template.response import TemplateResponse
+from django.urls import reverse
+from django.shortcuts import redirect
+from .models import Urzadzenie, Zgloszenie
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
 import pandas as pd
 import unicodecsv as csv
 from django.http import HttpResponse
-from .models import Urzadzenie, Zgloszenie, SystemOperacyjny
 from datetime import datetime
 from django.db import connection
 from io import BytesIO
+# Functions to export data to CSV
 
-
-# Funkcja generująca plik csv dla Urządzenia
 def export_urzadzenie_to_csv(modeladmin, request, queryset):
-    # Tworzy odpowiedź HTTP z typem zawartości 'text/csv'
     response = HttpResponse(content_type='text/csv')
-    # Generowanie nazw pliku z aktualną datą i czasem
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     filename = f'urzadzenia_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    # Tworzenie nazw kolumn z odpowiednimi ustawieniami quoting
     writer = csv.writer(response, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow([
         'PIM ID', 'Laboratorium', 'Nr Pomieszczenia', 'Opis', 'Nr Ewidencyjny', 'Typ Urządzenia',
@@ -29,16 +28,11 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
     ])
 
     for urzadzenie in queryset:
-        # Pobiera wartości z pola wiele-do-wielu jako ciąg rozdzielony przecinkami
         system_operacyjny = ', '.join([sys.typ_system_operacyjny.replace('\n', ' ').replace('\r', ' ') for sys in urzadzenie.system_operacyjny.all()])
-
-        # Funkcja pomocnicza do czyszczenia pól tekstowych
         def sanitize_field(field):
             if field is None:
                 return ''
             return str(field).replace('\n', ' ').replace('\r', ' ')
-
-        # Zapisywanie danych do pliku CSV
         writer.writerow([
             sanitize_field(urzadzenie.pim_id),
             sanitize_field(urzadzenie.laboratorium),
@@ -61,19 +55,13 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
             sanitize_field(urzadzenie.typ_polaczenia_sieciowego),
             sanitize_field(urzadzenie.notatki)
         ])
-
     return response
 
-
-# Funkcja generująca plik csv dla Zgłoszenia
 def export_zgloszenie_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
-    # Generowanie nazw pliku z aktualną datą i czasem
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     filename = f'zgloszenia_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    # Tworzenie nagłówków kolumn z odpowiednimi ustawieniami quoting
     writer = csv.writer(response, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow([
         'ID', 'EZD ID Koszulki', 'Nr Zgłoszenia', 'Nr EZD', 'Data Zgłoszenia', 'Nazwa Zakładu', 'Laboratorium',
@@ -85,7 +73,6 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
         'PIM ID Urządzenia', 'Notatki'
     ])
 
-    # Funkcja pomocnicza do czyszczenia pól tekstowych
     def sanitize_field(field):
         if field is None:
             return ''
@@ -93,8 +80,6 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
 
     for zgloszenie in queryset:
         urzadzenie_id = sanitize_field(zgloszenie.urzadzenie_id.pim_id) if zgloszenie.urzadzenie_id else ''
-
-        # Zapisywanie danych każdego zgłoszenia w pliku CSV
         writer.writerow([
             zgloszenie.id,
             sanitize_field(zgloszenie.nr_EZD_ID_koszulki),
@@ -130,37 +115,25 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
             urzadzenie_id,
             sanitize_field(zgloszenie.notatki)
         ])
-
     return response
 
-
-# Funkcja generująca plik csv dla Systemu operacyjnego
 def export_system_operacyjny_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
-
-    # Generowanie nazw pliku z aktualną datą i czasem
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     filename = f'systemy_operacyjne_{now}.csv'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    # Tworzenie nagłówków do pliku CSV z odpowiednimi ustawieniami quoting
     writer = csv.writer(response, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow([
         'Typ Systemu Operacyjnego'
     ])
 
-    # Pobieranie wszystkich Systemy operacyjne i zapisuje je do CSV
     systemy_operacyjne = queryset.objects.all()
     for system_operacyjny in systemy_operacyjne:
         writer.writerow([
             system_operacyjny.typ_system_operacyjny.replace('\n', ' ').replace('\r', ' ')
         ])
-
     return response
 
-
-# Funkcja generująca dokument .docx.
-# WYMAGA SZABLONU W ODPOWIEDNIM MIEJSCU
 def generate_docx(modeladmin, request, queryset):
     # przekształcenie danych w format odpowiedni do wydruku
     ids = [obj.id for obj in queryset]
@@ -244,3 +217,43 @@ def generate_docx(modeladmin, request, queryset):
         response['Content-Disposition'] = f'attachment; filename={cleaned_name}'
 
         return response
+
+# New view functions
+
+def view_urzadzenia(modeladmin, request, queryset):
+    selected = queryset.values_list('urzadzenie_id', flat=True)
+    url = reverse('admin:view_urzadzenia', args=[','.join(map(str, selected))])
+    return redirect(url)
+
+view_urzadzenia.short_description = "View associated Urządzenia"
+
+def view_urzadzenia_view(request, urzadzenie_ids):
+    urzadzenie_ids = urzadzenie_ids.split(',')
+    urzadzenia = Urzadzenie.objects.filter(pim_id__in=urzadzenie_ids)
+    for urzadzenie in urzadzenia:
+        urzadzenie.admin_url = reverse('admin:bazadanych_urzadzenie_change', args=[urzadzenie.pim_id])
+    context = dict(
+        admin.site.each_context(request),
+        title="Associated Urządzenia",
+        urzadzenia=urzadzenia,
+    )
+    return TemplateResponse(request, "admin/view_urzadzenia.html", context)
+
+def view_zgloszenia(modeladmin, request, queryset):
+    selected = queryset.values_list('pim_id', flat=True)
+    url = reverse('admin:view_zgloszenia', args=[','.join(map(str, selected))])
+    return redirect(url)
+
+view_zgloszenia.short_description = "View associated Zgloszenia"
+
+def view_zgloszenia_view(request, urzadzenie_ids):
+    urzadzenie_ids = urzadzenie_ids.split(',')
+    zgloszenia = Zgloszenie.objects.filter(urzadzenie_id__in=urzadzenie_ids)
+    for zgloszenie in zgloszenia:
+        zgloszenie.admin_url = reverse('admin:bazadanych_zgloszenie_change', args=[zgloszenie.id])
+    context = dict(
+        admin.site.each_context(request),
+        title="Associated Zgloszenia",
+        zgloszenia=zgloszenia,
+    )
+    return TemplateResponse(request, "admin/view_zgloszenia.html", context)

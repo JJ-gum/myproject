@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>{% trans "ID" %}</th>
+        <th>{% trans "PIM ID" %}</th>
+        <th>{% trans "Data Rejestracji" %}</th>
+        <th>{% trans "Laboratorium" %}</th>
+        <th>{% trans "Numer Ewidencyjny" %}</th>
+        <th>{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for urzadzenie in urzadzenia %}
+      <tr>
+        <td>{{ urzadzenie.id }}</td>
+        <td>{{ urzadzenie.pim_id }}</td>
+        <td>{{ urzadzenie.data_rejestracji }}</td>
+        <td>{{ urzadzenie.laboratorium }}</td>
+        <td>{{ urzadzenie.numer_ewidencyjny }}</td>
+        <td><a href="{{ urzadzenie.admin_url }}">{% trans "Edit" %}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
