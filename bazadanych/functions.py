@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from datetime import datetime
 from django.db import connection
 from io import BytesIO
-# Functions to export data to CSV
+
 
 def export_urzadzenie_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
@@ -29,6 +29,7 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
 
     for urzadzenie in queryset:
         system_operacyjny = ', '.join([sys.typ_system_operacyjny.replace('\n', ' ').replace('\r', ' ') for sys in urzadzenie.system_operacyjny.all()])
+
         def sanitize_field(field):
             if field is None:
                 return ''
@@ -56,6 +57,7 @@ def export_urzadzenie_to_csv(modeladmin, request, queryset):
             sanitize_field(urzadzenie.notatki)
         ])
     return response
+
 
 def export_zgloszenie_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
@@ -117,6 +119,7 @@ def export_zgloszenie_to_csv(modeladmin, request, queryset):
         ])
     return response
 
+
 def export_system_operacyjny_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -133,6 +136,7 @@ def export_system_operacyjny_to_csv(modeladmin, request, queryset):
             system_operacyjny.typ_system_operacyjny.replace('\n', ' ').replace('\r', ' ')
         ])
     return response
+
 
 def generate_docx(modeladmin, request, queryset):
     # przekształcenie danych w format odpowiedni do wydruku
@@ -218,14 +222,13 @@ def generate_docx(modeladmin, request, queryset):
 
         return response
 
-# New view functions
 
+# New view functions
 def view_urzadzenia(modeladmin, request, queryset):
     selected = queryset.values_list('urzadzenie_id', flat=True)
     url = reverse('admin:view_urzadzenia', args=[','.join(map(str, selected))])
     return redirect(url)
 
-view_urzadzenia.short_description = "View associated Urządzenia"
 
 def view_urzadzenia_view(request, urzadzenie_ids):
     urzadzenie_ids = urzadzenie_ids.split(',')
@@ -239,12 +242,12 @@ def view_urzadzenia_view(request, urzadzenie_ids):
     )
     return TemplateResponse(request, "admin/view_urzadzenia.html", context)
 
+
 def view_zgloszenia(modeladmin, request, queryset):
     selected = queryset.values_list('pim_id', flat=True)
     url = reverse('admin:view_zgloszenia', args=[','.join(map(str, selected))])
     return redirect(url)
 
-view_zgloszenia.short_description = "View associated Zgloszenia"
 
 def view_zgloszenia_view(request, urzadzenie_ids):
     urzadzenie_ids = urzadzenie_ids.split(',')
@@ -257,3 +260,11 @@ def view_zgloszenia_view(request, urzadzenie_ids):
         zgloszenia=zgloszenia,
     )
     return TemplateResponse(request, "admin/view_zgloszenia.html", context)
+
+
+generate_docx.short_description = "Wygeneruj formularz w formacie .docx"
+export_zgloszenie_to_csv.short_description = "Wyeksportuj zgłoszenia do csv"
+export_urzadzenie_to_csv.short_description = "Wyeksportuj urządzenia do csv"
+export_system_operacyjny_to_csv.short_description = "Wyeksportuj systemy operacyjne do csv"
+view_urzadzenia.short_description = "Wyświetl powiązane Urządzenia"
+view_zgloszenia.short_description = "Wyświetl powiązane Zgłoszenia"

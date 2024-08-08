@@ -7,10 +7,7 @@ from .functions import (
 )
 
 # Opis funkcji — napis wyświetlany przy wybraniu tej opcji w panelu administratora
-generate_docx.short_description = "Wygeneruj formularz w formacie .docx"
-export_zgloszenie_to_csv.short_description = "Wyeksportuj zgłoszenia do csv"
-export_urzadzenie_to_csv.short_description = "Wyeksportuj urządzenia do csv"
-export_system_operacyjny_to_csv.short_description = "Wyeksportuj systemy operacyjne do csv"
+
 
 
 # Ustawienia dotyczące wyświetlania Zgłoszenia w panelu administratora

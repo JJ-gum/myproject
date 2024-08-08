@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
-
 {% block content %}
   <h1>{{ title }}</h1>
   <table>
@@ -12,7 +11,7 @@
         <th>{% trans "Data Zgloszenia" %}</th>
         <th>{% trans "Nazwa Zakladu" %}</th>
         <th>{% trans "Laboratorium" %}</th>
-        <th>{% trans "Actions" %}</th>
+        <th>{% trans "Edycja" %}</th>
       </tr>
     </thead>
     <tbody>
@@ -24,7 +23,7 @@
         <td>{{ zgloszenie.data_zgloszenia }}</td>
         <td>{{ zgloszenie.nazwa_zakladu }}</td>
         <td>{{ zgloszenie.laboratorium }}</td>
-        <td><a href="{{ zgloszenie.admin_url }}">{% trans "Edit" %}</a></td>
+        <td><a href="{{ zgloszenie.admin_url }}">{% trans "Tu kliknij" %}</a></td>
       </tr>
       {% endfor %}
     </tbody>

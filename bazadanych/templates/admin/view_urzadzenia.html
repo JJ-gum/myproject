@@ -11,7 +11,7 @@
         <th>{% trans "Data Rejestracji" %}</th>
         <th>{% trans "Laboratorium" %}</th>
         <th>{% trans "Numer Ewidencyjny" %}</th>
-        <th>{% trans "Actions" %}</th>
+        <th>{% trans "Edycja" %}</th>
       </tr>
     </thead>
     <tbody>
@@ -22,7 +22,7 @@
         <td>{{ urzadzenie.data_rejestracji }}</td>
         <td>{{ urzadzenie.laboratorium }}</td>
         <td>{{ urzadzenie.numer_ewidencyjny }}</td>
-        <td><a href="{{ urzadzenie.admin_url }}">{% trans "Edit" %}</a></td>
+        <td><a href="{{ urzadzenie.admin_url }}">{% trans "Tu kliknij" %}</a></td>
       </tr>
       {% endfor %}
     </tbody>
