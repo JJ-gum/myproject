@@ -223,12 +223,11 @@ def generate_docx(modeladmin, request, queryset):
         return response
 
 
-# New view functions
+# Funkcja wyświetlająca widok urządzeń powiązanych z danym zgłoszeniem
 def view_urzadzenia(modeladmin, request, queryset):
     selected = queryset.values_list('urzadzenie_id', flat=True)
     url = reverse('admin:view_urzadzenia', args=[','.join(map(str, selected))])
     return redirect(url)
-
 
 def view_urzadzenia_view(request, urzadzenie_ids):
     urzadzenie_ids = urzadzenie_ids.split(',')
@@ -262,6 +261,7 @@ def view_zgloszenia_view(request, urzadzenie_ids):
     return TemplateResponse(request, "admin/view_zgloszenia.html", context)
 
 
+# Opis funkcji — napis wyświetlany przy wybraniu tej opcji w panelu administratora
 generate_docx.short_description = "Wygeneruj formularz w formacie .docx"
 export_zgloszenie_to_csv.short_description = "Wyeksportuj zgłoszenia do csv"
 export_urzadzenie_to_csv.short_description = "Wyeksportuj urządzenia do csv"

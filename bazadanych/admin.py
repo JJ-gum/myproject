@@ -6,9 +6,6 @@ from .functions import (
     generate_docx, view_urzadzenia, view_zgloszenia, view_urzadzenia_view, view_zgloszenia_view
 )
 
-# Opis funkcji — napis wyświetlany przy wybraniu tej opcji w panelu administratora
-
-
 
 # Ustawienia dotyczące wyświetlania Zgłoszenia w panelu administratora
 @admin.register(Zgloszenie)
