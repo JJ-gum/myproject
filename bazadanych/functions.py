@@ -210,7 +210,7 @@ def generate_docx(modeladmin, request, queryset):
         else:
             table2.cell(16, 0).paragraphs[-1].text = str(row['potwierdzenie_data'])
 
-        # Przygotowanie nazwy pliku (usuwanie z niej znaków zabronionych i dodanie odpowiedniego sufixa)
+        # Przygotowanie nazwy pliku (usuwanie z niej znaków zabronionych i dodanie odpowiedniego suffixa)
         prefix = (row['nr_zgloszenia'] or "Wybierz-kolego-numer-zgloszenia-nastepnym-razem-czy-cos").replace(".", "n").replace("/", "n")
         filename = f"{prefix}-F1-IP003-A-IT Zgloszenie-pomocy-technicznej-systemow-informatyki-metrologicznej-(SIM).docx"
         cleaned_name = re.sub(r'[\\/*?:"<>|]', "", filename)
@@ -229,6 +229,9 @@ def view_urzadzenia(modeladmin, request, queryset):
     url = reverse('admin:view_urzadzenia', args=[','.join(map(str, selected))])
     return redirect(url)
 
+
+# Funkcja generująca widok urządzeń powiązanych z danym zgłoszeniem
+# Wykorzystuje ona widok "view_urządzenia.html" z katalogu templates
 def view_urzadzenia_view(request, urzadzenie_ids):
     urzadzenie_ids = urzadzenie_ids.split(',')
     urzadzenia = Urzadzenie.objects.filter(pim_id__in=urzadzenie_ids)
@@ -242,12 +245,15 @@ def view_urzadzenia_view(request, urzadzenie_ids):
     return TemplateResponse(request, "admin/view_urzadzenia.html", context)
 
 
+# Funkcja wyświetlająca widok zgłoszeń powiązanych z danym urządzeniem
 def view_zgloszenia(modeladmin, request, queryset):
     selected = queryset.values_list('pim_id', flat=True)
     url = reverse('admin:view_zgloszenia', args=[','.join(map(str, selected))])
     return redirect(url)
 
 
+# Funkcja generująca widok zgłoszeń powiązanych z danym urządzeniem
+# Wykorzystuje ona widok "view_zgloszenia.html" z katalogu templates
 def view_zgloszenia_view(request, urzadzenie_ids):
     urzadzenie_ids = urzadzenie_ids.split(',')
     zgloszenia = Zgloszenie.objects.filter(urzadzenie_id__in=urzadzenie_ids)
