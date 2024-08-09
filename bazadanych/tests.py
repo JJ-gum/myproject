@@ -1,7 +1,7 @@
 from django.test import TestCase
-from .models import Urzadzenie, SystemOperacyjny, Zgloszenie
 from django.forms import ModelForm
 from django.urls import reverse
+from .models import Urzadzenie, SystemOperacyjny, Zgloszenie
 
 
 class ZgloszenieModelForm(ModelForm):
